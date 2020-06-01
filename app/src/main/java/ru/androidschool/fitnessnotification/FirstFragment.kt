@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_first.*
 import ru.androidschool.fitnessnotification.data.ReminderData
 import ru.androidschool.fitnessnotification.domain.ReminderRepository
+import ru.androidschool.fitnessnotification.notification.NotificationHelper
 import ru.androidschool.fitnessnotification.recycler.MainAdapter
 
 class FirstFragment : Fragment(), MainAdapter.OnClickReminderListener {
@@ -52,6 +53,9 @@ class FirstFragment : Fragment(), MainAdapter.OnClickReminderListener {
         progressBar.visibility = View.GONE
 
         fab.setOnClickListener {
+            NotificationHelper.createSampleDataNotification(
+                view.context, "Супер Уведомление", "Это уведомление для провеки", "", true
+            )
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
     }
