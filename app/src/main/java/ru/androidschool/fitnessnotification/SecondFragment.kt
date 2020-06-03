@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_second.*
 import ru.androidschool.fitnessnotification.data.ReminderData
 import ru.androidschool.fitnessnotification.data.WorkoutType
+import ru.androidschool.fitnessnotification.domain.ReminderLocalRepostiory
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -158,13 +159,12 @@ class SecondFragment : Fragment() {
         }
     }
 
-    fun createReminder(name: String, dateType: WorkoutType, days: List<String?>?): Long {
+    private fun createReminder(name: String, dateType: WorkoutType, days: List<String?>?): Long {
         reminderData.name = name
         reminderData.type = dateType
         reminderData.days = days
 
-        // TODO Сохранение информации в БД
-        return 0
+        return ReminderLocalRepostiory(activity?.applicationContext).saveReminder(reminderData)
     }
 
     private fun buildCheckBoxes(linearLayoutDates: LinearLayout) {

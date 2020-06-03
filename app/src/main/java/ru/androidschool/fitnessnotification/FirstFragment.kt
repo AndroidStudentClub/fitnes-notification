@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_first.*
 import ru.androidschool.fitnessnotification.data.ReminderData
+import ru.androidschool.fitnessnotification.domain.ReminderLocalRepostiory
 import ru.androidschool.fitnessnotification.domain.ReminderRepository
 import ru.androidschool.fitnessnotification.notification.NotificationHelper
 import ru.androidschool.fitnessnotification.recycler.MainAdapter
@@ -47,7 +48,7 @@ class FirstFragment : Fragment(), MainAdapter.OnClickReminderListener {
             )
         )
 
-        mainAdapter = MainAdapter(this, ReminderRepository.getMockRepository())
+        mainAdapter = MainAdapter(this, ReminderLocalRepostiory(activity?.applicationContext).getReminders())
         recyclerView.adapter = mainAdapter
         recyclerView.visibility = View.VISIBLE
         progressBar.visibility = View.GONE
