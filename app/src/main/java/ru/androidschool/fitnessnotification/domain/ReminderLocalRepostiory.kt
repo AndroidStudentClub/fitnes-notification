@@ -13,7 +13,12 @@ class ReminderLocalRepostiory(val context: Context?) {
         return dao.getReminderData()
     }
 
+    fun getReminderById(id: Long): ReminderData? {
+        return dao.getReminderById(id)
+    }
+
     fun saveReminder(reminderData:ReminderData):Long{
         return dao.insert(reminderData)
     }
 }
+

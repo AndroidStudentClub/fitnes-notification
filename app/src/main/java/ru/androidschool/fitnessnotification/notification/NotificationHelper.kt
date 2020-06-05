@@ -5,11 +5,15 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import ru.androidschool.fitnessnotification.KEY_ID
 import ru.androidschool.fitnessnotification.MainActivity
 import ru.androidschool.fitnessnotification.R
+import ru.androidschool.fitnessnotification.data.ReminderData
+import ru.androidschool.fitnessnotification.data.WorkoutType
 
 object NotificationHelper {
 
@@ -82,5 +86,83 @@ object NotificationHelper {
 
         val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.notify(1001, notificationBuilder.build())
+    }
+
+
+    fun createNotificationForWorkout(context: Context, reminderData: ReminderData) {
+
+        // 1 create a group notification
+        val groupBuilder = buildGroupNotification(context, reminderData)
+        // 2
+        val notificationBuilder = buildNotification(context, reminderData)
+        // 3
+        val notificationManager = NotificationManagerCompat.from(context)
+        notificationManager.notify(reminderData.type.ordinal, groupBuilder.build())
+        notificationManager.notify(reminderData.id.toInt(), notificationBuilder.build())
+    }
+
+
+
+    private fun buildGroupNotification(
+        context: Context,
+        reminderData: ReminderData
+    ): NotificationCompat.Builder {
+        val channelId = "${context.packageName}-${reminderData.type.name}"
+        return NotificationCompat.Builder(context, channelId).apply {
+            setSmallIcon(R.drawable.ic_fitnes)
+            setContentTitle(reminderData.type.name)
+            setContentText(
+                context.getString(
+                    R.string.group_notification_for,
+                    reminderData.type.name
+                )
+            )
+            setStyle(
+                NotificationCompat.BigTextStyle().bigText(
+                    context.getString(
+                        R.string.group_notification_for,
+                        reminderData.type.name
+                    )
+                )
+            )
+            setAutoCancel(true)
+            setGroupSummary(true)
+            setGroup(reminderData.type.name)
+        }
+    }
+
+    private fun buildNotification(
+        context: Context,
+        reminderData: ReminderData
+    ): NotificationCompat.Builder {
+
+
+        val channelId = "${context.packageName}-${reminderData.type.name}"
+
+        return NotificationCompat.Builder(context, channelId).apply {
+            setSmallIcon(R.drawable.ic_fitnes)
+            setContentTitle(reminderData.name)
+            setAutoCancel(true)
+
+            // get a drawable reference for the LargeIcon
+            val drawable = when (reminderData.type) {
+                WorkoutType.Running -> R.drawable.ic_run
+                WorkoutType.Cycling -> R.drawable.ic_velo
+                else -> R.drawable.ic_swimming
+            }
+            setLargeIcon(BitmapFactory.decodeResource(context.resources, drawable))
+            setContentText("${reminderData.name}")
+            setGroup(reminderData.type.name)
+
+
+            // Launches the app to open the reminder edit screen when tapping the whole notification
+            val intent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra(KEY_ID, reminderData.id)
+            }
+
+            val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+            setContentIntent(pendingIntent)
+        }
     }
 }

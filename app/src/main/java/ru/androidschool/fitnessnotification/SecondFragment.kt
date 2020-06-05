@@ -14,9 +14,11 @@ import kotlinx.android.synthetic.main.fragment_second.*
 import ru.androidschool.fitnessnotification.data.ReminderData
 import ru.androidschool.fitnessnotification.data.WorkoutType
 import ru.androidschool.fitnessnotification.domain.ReminderLocalRepostiory
+import ru.androidschool.fitnessnotification.notification.AlarmScheduler
 import java.text.SimpleDateFormat
 import java.util.*
 
+const val KEY_ID = "id"
 
 class SecondFragment : Fragment() {
 
@@ -76,9 +78,18 @@ class SecondFragment : Fragment() {
                     dateType = dateType,
                     days = daysItems.filter { !it.isNullOrEmpty() }.toList()
                 )
+
+                val reminder =
+                    ReminderLocalRepostiory(activity?.applicationContext).getReminderById(id)
+
+                AlarmScheduler.scheduleAlarmsForReminder(activity?.applicationContext!!, reminder!!)
+                Snackbar.make(
+                    view,
+                    "Напоминание о тренировке создано!",
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         }
-
     }
 
     private fun setTimeButtonText(hourOfDay: Int, minute: Int) {
